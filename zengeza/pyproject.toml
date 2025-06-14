@@ -1,0 +1,190 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zengeza"
+version = "0.1.0"
+description = "Noise reduction and attention space optimization system for the Machinery framework"
+authors = [
+    { name = "Machinery Team", email = "team@machinery.dev" }
+]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+keywords = ["noise-reduction", "attention-optimization", "signal-processing", "data-compression", "information-filtering"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    # Core scientific computing
+    "numpy>=1.21.0",
+    "scipy>=1.8.0",
+    "pandas>=1.4.0",
+    
+    # Signal processing and analysis
+    "scikit-learn>=1.2.0",
+    "statsmodels>=0.13.0",
+    "pykalman>=0.9.5",
+    "filterpy>=1.4.5",
+    "pywavelets>=1.4.0",
+    
+    # Time series analysis
+    "tslearn>=0.5.2",
+    "tsfresh>=0.20.0",
+    "stumpy>=1.11.0",
+    "pytseries>=0.1.0",
+    
+    # Information theory
+    "dit>=1.4.0",
+    "entropy>=0.2.1",
+    "pyinform>=0.2.0",
+    "mutual-info>=1.2.0",
+    
+    # Compression and encoding
+    "lz4>=4.0.0",
+    "zstandard>=0.19.0",
+    "blosc2>=2.0.0",
+    "brotli>=1.0.9",
+    
+    # Feature selection and dimensionality reduction
+    "feature-engine>=1.6.0",
+    "scikit-feature>=1.1.0",
+    "boruta>=0.3.0",
+    "umap-learn>=0.5.3",
+    
+    # Optimization and algorithms
+    "optuna>=3.1.0",
+    "hyperopt>=0.2.7",
+    "deap>=1.3.3",
+    "pyswarm>=0.6.0",
+    
+    # Visualization
+    "matplotlib>=3.5.0",
+    "seaborn>=0.11.0",
+    "plotly>=5.10.0",
+    "bokeh>=2.4.0",
+    
+    # Data processing
+    "pydantic>=1.10.0",
+    "fastapi>=0.95.0",
+    "uvicorn>=0.20.0",
+    
+    # Memory and caching
+    "diskcache>=5.4.0",
+    "joblib>=1.2.0",
+    "memory-profiler>=0.60.0",
+    
+    # Parallel processing
+    "dask>=2022.12.0",
+    "ray[default]>=2.3.0",
+    "multiprocessing-logging>=0.3.4",
+    
+    # Utilities
+    "tqdm>=4.64.0",
+    "rich>=12.0.0",
+    "typer>=0.7.0",
+    "python-dotenv>=0.19.0",
+    "psutil>=5.9.0",
+    
+    # Mathematical optimization
+    "cvxpy>=1.3.0",
+    "cvxopt>=1.3.0",
+    "pulp>=2.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-benchmark>=4.0.0",
+    "black>=22.0.0",
+    "isort>=5.10.0",
+    "flake8>=5.0.0",
+    "mypy>=0.990",
+    "pre-commit>=2.20.0",
+]
+
+gpu = [
+    "cupy>=11.0.0",
+    "rapids-cudf>=22.12.0",
+    "torch[cuda]>=1.12.0",
+    "tensorflow-gpu>=2.11.0",
+]
+
+research = [
+    "jupyter>=1.0.0",
+    "jupyterlab>=3.4.0",
+    "ipywidgets>=8.0.0",
+    "papermill>=2.4.0",
+    "nbconvert>=7.0.0",
+]
+
+bio = [
+    "biopython>=1.80.0",
+    "pysam>=0.20.0",
+    "genomepy>=0.14.0",
+    "bioinfokit>=2.1.0",
+]
+
+timeseries = [
+    "prophet>=1.1.0",
+    "neuralprophet>=0.5.0",
+    "sktime>=0.15.0",
+    "pyflux>=0.4.17",
+]
+
+deep-learning = [
+    "torch>=1.12.0",
+    "tensorflow>=2.11.0",
+    "keras>=2.11.0",
+    "transformers>=4.25.0",
+    "pytorch-lightning>=1.9.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/fullscreen-triangle/machinery"
+Documentation = "https://fullscreen-triangle.github.io/machinery"
+Repository = "https://github.com/fullscreen-triangle/machinery"
+"Bug Tracker" = "https://github.com/fullscreen-triangle/machinery/issues"
+
+[project.scripts]
+zengeza = "zengeza.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 88
+target-version = ["py39", "py310", "py311"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--cov=zengeza --cov-report=term-missing"
+asyncio_mode = "auto" 
