@@ -1,0 +1,228 @@
+version: '3.8'
+
+services:
+  # Main Machinery application
+  machinery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: machinery-orchestrator
+    restart: unless-stopped
+    ports:
+      - "8080:8080"    # API server
+      - "9090:9090"    # Metrics endpoint
+    environment:
+      - RUST_LOG=info
+      - MACHINERY_CONFIG=/app/machinery.toml
+      - DATABASE_URL=postgresql://machinery:machinery_password@postgres:5432/machinery_health
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - ./machinery.toml:/app/machinery.toml:ro
+      - machinery_data:/app/data
+      - machinery_logs:/app/logs
+      - machinery_models:/app/models
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - machinery_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # PostgreSQL database for persistent health data
+  postgres:
+    image: postgres:15-alpine
+    container_name: machinery-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=machinery_health
+      - POSTGRES_USER=machinery
+      - POSTGRES_PASSWORD=machinery_password
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - machinery_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U machinery -d machinery_health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for real-time data and caching
+  redis:
+    image: redis:7-alpine
+    container_name: machinery-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - machinery_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: machinery-prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9091:9090"
+    networks:
+      - machinery_network
+    depends_on:
+      - machinery
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: machinery-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=machinery_admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - machinery_network
+    depends_on:
+      - prometheus
+
+  # Nginx reverse proxy for production
+  nginx:
+    image: nginx:alpine
+    container_name: machinery-nginx
+    restart: unless-stopped
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - machinery_network
+    depends_on:
+      - machinery
+      - grafana
+    profiles:
+      - production
+
+  # Health data backup service
+  backup:
+    image: postgres:15-alpine
+    container_name: machinery-backup
+    restart: "no"
+    environment:
+      - PGPASSWORD=machinery_password
+    volumes:
+      - ./backups:/backups
+      - backup_scripts:/scripts:ro
+    command: |
+      sh -c '
+        echo "Starting backup service..."
+        while true; do
+          echo "Creating backup at $$(date)"
+          pg_dump -h postgres -U machinery -d machinery_health > /backups/machinery_backup_$$(date +%Y%m%d_%H%M%S).sql
+          echo "Backup completed"
+          sleep 86400  # 24 hours
+        done
+      '
+    networks:
+      - machinery_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - backup
+
+  # Development tools container
+  dev-tools:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: machinery-dev-tools
+    restart: "no"
+    volumes:
+      - .:/workspace
+      - machinery_cargo_cache:/usr/local/cargo/registry
+    working_dir: /workspace
+    command: sleep infinity
+    networks:
+      - machinery_network
+    profiles:
+      - development
+
+volumes:
+  # Application data
+  machinery_data:
+    driver: local
+  machinery_logs:
+    driver: local
+  machinery_models:
+    driver: local
+  
+  # Database data
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  
+  # Monitoring data
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  
+  # Development
+  machinery_cargo_cache:
+    driver: local
+  
+  # Backup scripts
+  backup_scripts:
+    driver: local
+
+networks:
+  machinery_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# Health check configuration
+x-healthcheck-defaults: &healthcheck-defaults
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 30s 

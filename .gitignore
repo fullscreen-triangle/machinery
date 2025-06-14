@@ -1,0 +1,135 @@
+# Rust build artifacts
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Health data and logs (sensitive)
+/data/
+/logs/
+*.log
+*.db
+*.sqlite
+*.sqlite3
+
+# Configuration files with secrets
+machinery.local.toml
+.env
+.env.local
+.env.production
+secrets.toml
+
+# Device-specific files
+/device_configs/
+/calibration_data/
+/personal_baselines/
+
+# Model files and training data
+/models/
+/training_data/
+/model_cache/
+*.model
+*.pkl
+*.joblib
+
+# Temporary files
+/tmp/
+/temp/
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Seke script compilation cache
+/seke_cache/
+*.seke.compiled
+
+# Test artifacts
+/test_results/
+/coverage/
+*.profraw
+
+# Documentation build
+/book/
+/mdbook/
+
+# Benchmarking results
+/benches/results/
+criterion/
+
+# Health monitoring device drivers (may contain proprietary code)
+/drivers/proprietary/
+
+# Redis dump files
+dump.rdb
+
+# PostgreSQL files
+*.sql.backup
+
+# Certificate and key files
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Jupyter notebooks (if used for analysis)
+.ipynb_checkpoints/
+*.ipynb
+
+# Python virtual environments (if used for data analysis)
+venv/
+env/
+.venv/
+
+# Node.js (if used for web interfaces)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Kubernetes
+*.kubeconfig
+
+# Terraform (if used for infrastructure)
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Health data exports (potentially sensitive)
+/exports/
+*.csv.export
+*.json.export
+
+# Performance profiling data
+*.perf
+*.prof
+flamegraph.svg
+
+# Core dumps
+core.*
+*.core
+
+# Fuzzing artifacts
+/fuzz/artifacts/
+/fuzz/corpus/

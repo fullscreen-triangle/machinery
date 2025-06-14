@@ -1,0 +1,260 @@
+# Machinery Configuration File
+# This file configures the continuous health monitoring and prediction system
+
+[orchestrator]
+# Health AI Orchestrator settings
+prediction_interval = "5min"           # How often to generate predictions
+model_update_interval = "1hour"        # How often to update models
+data_retention_days = 365              # How long to keep historical data
+max_concurrent_predictions = 50        # Maximum parallel prediction tasks
+health_ai_threads = 4                  # Dedicated threads for health AI processing
+
+# Prediction confidence thresholds
+min_prediction_confidence = 0.6        # Minimum confidence to act on predictions
+high_confidence_threshold = 0.8        # Threshold for high-confidence predictions
+anomaly_alert_threshold = 0.9          # Confidence needed to trigger anomaly alerts
+
+[seke_engine]
+# Seke Script Engine configuration
+max_concurrent_scripts = 100           # Maximum parallel script executions
+script_timeout = "30s"                 # Maximum execution time per script
+confidence_threshold = 0.7             # Minimum confidence for script outputs
+fuzzy_precision = 0.01                 # Precision for fuzzy logic calculations
+context_cache_size = 1000              # Number of contexts to cache
+script_reload_interval = "10min"       # How often to check for script updates
+
+# Memory and performance settings
+max_memory_per_script = "100MB"        # Memory limit per script execution
+garbage_collection_interval = "5min"   # How often to clean up unused contexts
+enable_script_optimization = true      # Enable script compilation optimization
+
+[data_sources]
+# Health monitoring device configurations
+
+[data_sources.continuous_glucose]
+enabled = true
+device = "dexcom_g7"                   # Supported: dexcom_g7, freestyle_libre, medtronic
+sampling_rate = "1min"                 # How often to collect readings
+calibration_interval = "12hours"       # How often to recalibrate
+alert_thresholds = { low = 70, high = 180 }
+
+[data_sources.heart_rate]
+enabled = true
+device = "polar_h10"                   # Supported: polar_h10, garmin_hrm, wahoo_tickr
+sampling_rate = "1s"                   # High-frequency for HRV analysis
+enable_hrv_analysis = true             # Calculate heart rate variability
+rr_interval_precision = "1ms"          # Precision for R-R intervals
+
+[data_sources.sleep_tracking]
+enabled = true
+device = "oura_ring"                   # Supported: oura_ring, whoop, fitbit, garmin
+sleep_stage_detection = true           # Enable sleep stage analysis
+temperature_tracking = true            # Track body temperature during sleep
+movement_sensitivity = "medium"        # Sensitivity for movement detection
+
+[data_sources.activity_tracking]
+enabled = true
+device = "garmin_watch"                # Supported: garmin_watch, apple_watch, fitbit
+gps_accuracy = "high"                  # GPS precision for outdoor activities
+accelerometer_rate = "50hz"            # Accelerometer sampling rate
+enable_stress_tracking = true          # Monitor stress through HRV
+
+[data_sources.blood_pressure]
+enabled = false
+device = "omron_connect"               # Supported: omron_connect, withings, qardio
+measurement_frequency = "daily"        # How often to take measurements
+auto_measurement_times = ["morning", "evening"]
+
+[data_sources.body_composition]
+enabled = false
+device = "tanita_scale"                # Supported: tanita_scale, withings, fitbit_aria
+measurement_frequency = "weekly"       # How often to measure body composition
+bioimpedance_frequency = "50khz"       # Frequency for bioimpedance analysis
+
+[data_sources.environmental]
+enabled = true
+air_quality_monitoring = true          # Monitor air quality impact on health
+temperature_humidity = true            # Track environmental temperature/humidity
+light_exposure = true                  # Monitor light exposure for circadian analysis
+noise_level_monitoring = false         # Monitor noise pollution levels
+
+[modeling]
+# Health modeling and prediction settings
+
+# Baseline establishment
+baseline_establishment_days = 30       # Days needed to establish personal baseline
+minimum_data_points = 100             # Minimum measurements for reliable baseline
+baseline_confidence_level = 0.95      # Statistical confidence for baseline ranges
+baseline_update_frequency = "weekly"   # How often to update baseline values
+
+# Prediction settings
+prediction_horizon = "24hours"         # How far ahead to predict
+short_term_horizon = "2hours"          # Short-term prediction window
+medium_term_horizon = "12hours"        # Medium-term prediction window
+long_term_horizon = "7days"            # Long-term prediction window
+
+# Anomaly detection
+anomaly_sensitivity = 0.8              # Sensitivity for anomaly detection (0-1)
+anomaly_window_size = "1hour"          # Time window for anomaly analysis
+false_positive_tolerance = 0.05        # Acceptable false positive rate
+anomaly_confirmation_time = "15min"    # Time to confirm anomaly before alerting
+
+# Model adaptation
+learning_rate = 0.01                   # How quickly models adapt to new data
+model_decay_factor = 0.99              # How much to weight historical vs recent data
+cross_validation_folds = 5             # Number of folds for model validation
+model_ensemble_size = 3                # Number of models in ensemble
+
+[patterns]
+# Individual pattern learning configuration
+
+# Pattern recognition
+pattern_discovery_window = "7days"     # Time window for discovering new patterns
+pattern_confidence_threshold = 0.75    # Confidence needed to establish a pattern
+pattern_validation_period = "14days"   # Time to validate discovered patterns
+max_patterns_per_category = 50         # Maximum patterns to track per health category
+
+# Circadian rhythm analysis
+circadian_analysis_enabled = true      # Enable circadian pattern analysis
+circadian_window = "21days"            # Time window for circadian analysis
+circadian_confidence_threshold = 0.8   # Confidence for circadian patterns
+
+# Correlation analysis
+correlation_threshold = 0.6            # Minimum correlation to consider significant
+correlation_window = "30days"          # Time window for correlation analysis
+max_correlation_lag = "6hours"         # Maximum time lag for correlations
+
+[storage]
+# Data storage configuration
+
+# Primary database (PostgreSQL)
+database_url = "postgresql://machinery:password@localhost/machinery_health"
+connection_pool_size = 10              # Number of database connections
+query_timeout = "30s"                  # Maximum query execution time
+enable_connection_encryption = true    # Use SSL/TLS for database connections
+
+# Time-series database (Redis)
+redis_url = "redis://localhost:6379"   # Redis connection for real-time data
+redis_db = 0                          # Redis database number
+redis_key_expiry = "30days"           # How long to keep real-time data in Redis
+
+# Local storage (RocksDB)
+local_storage_path = "./data/machinery" # Path for local data storage
+local_storage_compression = "lz4"      # Compression algorithm for local storage
+local_storage_cache_size = "1GB"       # Cache size for local storage
+
+# Data retention
+raw_data_retention = "1year"           # How long to keep raw sensor data
+processed_data_retention = "2years"    # How long to keep processed data
+model_data_retention = "5years"        # How long to keep model training data
+backup_frequency = "daily"             # How often to backup data
+
+[security]
+# Security and privacy settings
+
+# Data encryption
+encrypt_data_at_rest = true            # Encrypt stored data
+encrypt_data_in_transit = true         # Encrypt data transmission
+encryption_algorithm = "AES-256-GCM"   # Encryption algorithm
+key_rotation_interval = "90days"       # How often to rotate encryption keys
+
+# Access control
+enable_authentication = true           # Require authentication for access
+session_timeout = "24hours"           # How long sessions remain active
+max_failed_login_attempts = 5         # Maximum failed login attempts
+account_lockout_duration = "30min"    # How long to lock accounts after failed attempts
+
+# Privacy
+anonymize_exported_data = true        # Remove identifying information from exports
+data_sharing_consent_required = true  # Require explicit consent for data sharing
+audit_log_retention = "2years"        # How long to keep audit logs
+
+[alerts]
+# Health alert configuration
+
+# Alert channels
+enable_push_notifications = true      # Send push notifications for alerts
+enable_email_alerts = false          # Send email alerts
+enable_sms_alerts = false            # Send SMS alerts for critical issues
+
+# Alert thresholds
+critical_alert_threshold = 0.95      # Confidence needed for critical alerts
+warning_alert_threshold = 0.8        # Confidence needed for warning alerts
+info_alert_threshold = 0.6           # Confidence needed for info alerts
+
+# Alert frequency limits
+max_alerts_per_hour = 5              # Maximum alerts per hour
+alert_cooldown_period = "15min"      # Minimum time between similar alerts
+critical_alert_override = true       # Allow critical alerts to bypass limits
+
+[api]
+# API server configuration
+
+# Server settings
+bind_address = "127.0.0.1"           # IP address to bind to
+port = 8080                          # Port for API server
+enable_cors = true                   # Enable CORS for web clients
+max_request_size = "10MB"            # Maximum request size
+
+# Rate limiting
+requests_per_minute = 100            # Maximum requests per minute per client
+burst_size = 20                     # Burst allowance for rate limiting
+enable_rate_limiting = true         # Enable rate limiting
+
+# API versioning
+current_api_version = "v1"           # Current API version
+supported_versions = ["v1"]         # List of supported API versions
+
+[logging]
+# Logging configuration
+
+# Log levels
+default_level = "info"               # Default log level
+health_ai_level = "debug"            # Log level for health AI components
+seke_engine_level = "info"           # Log level for seke script engine
+data_collectors_level = "warn"       # Log level for data collectors
+
+# Log output
+log_to_file = true                   # Write logs to file
+log_file_path = "./logs/machinery.log" # Path for log files
+log_file_rotation = "daily"          # How often to rotate log files
+max_log_file_size = "100MB"          # Maximum size per log file
+keep_log_files = 30                  # Number of old log files to keep
+
+# Structured logging
+enable_json_logging = false          # Use JSON format for logs
+include_timestamps = true            # Include timestamps in logs
+include_thread_ids = true            # Include thread IDs in logs
+
+[monitoring]
+# System monitoring and metrics
+
+# Metrics collection
+enable_metrics = true                # Enable metrics collection
+metrics_port = 9090                  # Port for metrics endpoint (Prometheus format)
+metrics_update_interval = "10s"      # How often to update metrics
+
+# Health checks
+enable_health_checks = true         # Enable health check endpoints
+health_check_interval = "30s"       # How often to run health checks
+health_check_timeout = "5s"         # Timeout for health checks
+
+# Performance monitoring
+track_prediction_latency = true     # Track prediction response times
+track_memory_usage = true           # Monitor memory usage
+track_cpu_usage = true              # Monitor CPU usage
+track_disk_usage = true             # Monitor disk usage
+
+[development]
+# Development and debugging settings
+
+# Debug features
+enable_debug_mode = false           # Enable debug features
+verbose_logging = false             # Enable verbose logging
+enable_profiling = false            # Enable performance profiling
+save_debug_data = false             # Save intermediate data for debugging
+
+# Testing
+enable_test_mode = false            # Enable test mode with mock data
+test_data_path = "./test_data/"     # Path to test data files
+mock_device_data = false            # Use mock device data instead of real devices 

@@ -1,0 +1,129 @@
+[package]
+name = "machinery"
+version = "0.1.0"
+edition = "2021"
+authors = ["Machinery Team <team@machinery.dev>"]
+description = "Continuous Individual Health Modeling Through Iterative System Prediction"
+license = "MIT"
+repository = "https://github.com/fullscreen-triangle/machinery"
+keywords = ["health", "monitoring", "prediction", "fuzzy-logic", "personalized-medicine"]
+categories = ["science", "algorithms", "data-structures"]
+
+[workspace]
+members = [
+    "crates/orchestrator",
+    "crates/seke-engine", 
+    "crates/data-collectors",
+    "crates/prediction",
+    "crates/modeling",
+    "crates/validation",
+    "crates/patterns"
+]
+
+[dependencies]
+# Core async runtime
+tokio = { version = "1.35", features = ["full"] }
+tokio-stream = "0.1"
+
+# Serialization and configuration
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+toml = "0.8"
+config = "0.14"
+
+# Data processing and analysis
+ndarray = "0.15"
+nalgebra = "0.32"
+polars = { version = "0.35", features = ["lazy", "temporal", "strings"] }
+arrow = "50.0"
+
+# Machine learning and statistics
+candle-core = "0.3"
+candle-nn = "0.3"
+linfa = "0.7"
+smartcore = "0.3"
+
+# Fuzzy logic and uncertainty
+fuzzy-logic = "0.2"
+probabilistic = "0.1"
+
+# Time series and temporal analysis
+chrono = { version = "0.4", features = ["serde"] }
+time = "0.3"
+
+# Database and storage
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid"] }
+redis = { version = "0.24", features = ["tokio-comp"] }
+rocksdb = "0.21"
+
+# Networking and APIs
+reqwest = { version = "0.11", features = ["json", "stream"] }
+axum = "0.7"
+tower = "0.4"
+hyper = "1.0"
+
+# Health device integrations
+bluetooth-serial-port = "0.5"
+serialport = "4.2"
+usb-device = "0.2"
+
+# Logging and monitoring
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+metrics = "0.22"
+prometheus = "0.13"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Utilities
+uuid = { version = "1.6", features = ["v4", "serde"] }
+clap = { version = "4.4", features = ["derive"] }
+once_cell = "1.19"
+dashmap = "5.5"
+
+# Workspace crates
+machinery-orchestrator = { path = "crates/orchestrator" }
+machinery-seke-engine = { path = "crates/seke-engine" }
+machinery-data-collectors = { path = "crates/data-collectors" }
+machinery-prediction = { path = "crates/prediction" }
+machinery-modeling = { path = "crates/modeling" }
+machinery-validation = { path = "crates/validation" }
+machinery-patterns = { path = "crates/patterns" }
+
+[dev-dependencies]
+criterion = "0.5"
+proptest = "1.4"
+tokio-test = "0.4"
+
+[[bin]]
+name = "machinery-orchestrator"
+path = "src/bin/orchestrator.rs"
+
+[[bin]]
+name = "machinery-setup"
+path = "src/bin/setup.rs"
+
+[[bin]]
+name = "machinery-cli"
+path = "src/bin/cli.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.dev]
+opt-level = 0
+debug = true
+overflow-checks = true
+
+[features]
+default = ["full"]
+full = ["genomics", "metabolomics", "advanced-ml", "device-integrations"]
+genomics = []
+metabolomics = []
+advanced-ml = ["candle-core/cuda"]
+device-integrations = ["bluetooth-serial-port"] 
