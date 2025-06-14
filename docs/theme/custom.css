@@ -1,0 +1,96 @@
+/* Custom styling for Machinery documentation */
+
+/* Status indicators */
+.status-implemented {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.status-in-progress {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.status-not-implemented {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Enhanced code blocks */
+.hljs {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+}
+
+/* Callout boxes */
+.callout {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-left: 4px solid #007bff;
+    background-color: #f8f9fa;
+    border-radius: 0 4px 4px 0;
+}
+
+.callout.warning {
+    border-left-color: #ffc107;
+    background-color: #fff3cd;
+}
+
+.callout.danger {
+    border-left-color: #dc3545;
+    background-color: #f8d7da;
+}
+
+.callout.success {
+    border-left-color: #28a745;
+    background-color: #d4edda;
+}
+
+/* Table improvements */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+table th,
+table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+/* Logo styling */
+img[alt="Machinery Logo"] {
+    max-width: 200px;
+    height: auto;
+    display: block;
+    margin: 0 auto 2rem auto;
+}
+
+/* Navigation improvements */
+.chapter li.chapter-item {
+    margin: 0.2rem 0;
+}
+
+/* Footer styling */
+.page-wrapper {
+    padding-bottom: 2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .content {
+        padding: 1rem;
+    }
+    
+    img[alt="Machinery Logo"] {
+        max-width: 150px;
+    }
+} 

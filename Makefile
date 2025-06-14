@@ -277,5 +277,26 @@ CONFIG_FILE ?= machinery.toml
 LOG_LEVEL ?= info
 RUST_LOG ?= $(LOG_LEVEL)
 
+# Documentation targets
+docs: ## Build and serve documentation
+	@echo "Building and serving documentation..."
+	@cd docs && mdbook serve
+
+docs-build: ## Build documentation only
+	@echo "Building documentation..."
+	@cd docs && mdbook build
+
+docs-check: ## Check documentation links
+	@echo "Checking documentation links..."
+	@cd docs && mdbook-linkcheck
+
+docs-clean: ## Clean documentation build artifacts  
+	@echo "Cleaning documentation..."
+	@rm -rf docs/book
+
+docs-deploy: ## Deploy documentation to GitHub Pages (CI use)
+	@echo "Deploying documentation..."
+	@cd docs && mdbook build
+
 # Export environment variables
 export RUST_LOG
