@@ -1,0 +1,38 @@
+[package]
+name = "machinery-modeling"
+version = "0.1.0"
+edition = "2021"
+authors = ["Machinery Team <team@machinery.dev>"]
+description = "Temporal modeling and dynamics for biological systems"
+license = "MIT"
+
+[dependencies]
+# Time and date handling
+chrono = { version = "0.4", features = ["serde"] }
+time = "0.3"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Mathematical operations
+nalgebra = "0.32"
+ndarray = "0.15"
+
+# Fuzzy logic and uncertainty
+fuzzy-logic = "0.2"
+probabilistic = "0.1"
+
+# Async support
+tokio = { version = "1.35", features = ["full"] }
+
+# Error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# Utilities
+uuid = { version = "1.6", features = ["v4", "serde"] }
+
+[dev-dependencies]
+tokio-test = "0.4"
+proptest = "1.4" 

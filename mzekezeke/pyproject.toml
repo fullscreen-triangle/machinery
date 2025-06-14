@@ -1,0 +1,123 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mzekezeke"
+version = "0.1.0"
+description = "Scientific health analysis and ML prediction engine for Machinery framework"
+authors = [
+    { name = "Machinery Team", email = "team@machinery.dev" }
+]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+keywords = ["health", "machine-learning", "bioinformatics", "prediction", "analysis"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Healthcare Industry",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+
+dependencies = [
+    # Core scientific computing
+    "numpy>=1.21.0",
+    "scipy>=1.8.0",
+    "pandas>=1.4.0",
+    
+    # Machine learning
+    "scikit-learn>=1.2.0",
+    "transformers>=4.20.0",
+    "torch>=1.12.0",
+    "huggingface-hub>=0.14.0",
+    
+    # Health/biomedical specific
+    "heartpy>=1.2.7",
+    "neurokit2>=0.2.0",
+    "bioread>=3.0.0",
+    "pyEDFlib>=0.1.30",
+    
+    # Data processing
+    "pydantic>=1.10.0",
+    "fastapi>=0.95.0",
+    "uvicorn>=0.20.0",
+    
+    # Time series analysis
+    "statsmodels>=0.13.0",
+    "prophet>=1.1.0",
+    
+    # Visualization
+    "matplotlib>=3.5.0",
+    "seaborn>=0.11.0",
+    "plotly>=5.10.0",
+    
+    # Utilities
+    "requests>=2.28.0",
+    "python-dotenv>=0.19.0",
+    "typer>=0.7.0",
+    "rich>=12.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=22.0.0",
+    "isort>=5.10.0",
+    "flake8>=5.0.0",
+    "mypy>=0.990",
+    "pre-commit>=2.20.0",
+]
+
+gpu = [
+    "torch[cuda]>=1.12.0",
+    "tensorflow>=2.10.0",
+]
+
+research = [
+    "jupyter>=1.0.0",
+    "jupyterlab>=3.4.0",
+    "ipywidgets>=8.0.0",
+    "papermill>=2.4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/fullscreen-triangle/machinery"
+Documentation = "https://fullscreen-triangle.github.io/machinery"
+Repository = "https://github.com/fullscreen-triangle/machinery"
+"Bug Tracker" = "https://github.com/fullscreen-triangle/machinery/issues"
+
+[project.scripts]
+mzekezeke = "mzekezeke.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 88
+target-version = ["py39", "py310", "py311"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--cov=mzekezeke --cov-report=term-missing" 
